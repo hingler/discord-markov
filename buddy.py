@@ -168,6 +168,8 @@ class DubsClient(discord.Client):
         parent = self.seq_tree[combine]
       self.ctr = self.ctr + 1
       if self.ctr == self.save_every:
+        self.ctr = self.ctr - self.save_every
+        print("saving markov data to file...")
         self.save_to_file()
 
 def main():
