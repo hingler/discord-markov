@@ -15,12 +15,15 @@ class DubsClient(discord.Client):
     super().__init__()
     # initialize with empty string
     self.seq_tree = {"": ChainEntry()}
-    self.max_chain_size = 5
+    self.max_chain_size = 3
     self.id = my_id
     self.command = my_command
     self.save_every = 10
     self.ctr = 0
     self.read_from_file()
+    self.msg_cache = open(f"msg_cache_{self.id}.txt", "a")
+
+
 
   def save_to_file(self):
     filename = f"markov_cache_{self.id}.txt"
@@ -83,7 +86,9 @@ class DubsClient(discord.Client):
 
 
   async def on_message(self, message):
-    if message.clean_content == f"+{self.command}":
+    if message.clean_content == "+stop":
+      await self.close()
+    elif message.clean_content == f"+{self.command}":
       start = self.seq_tree[""]
       msg = []
       bucket = []
@@ -123,6 +128,7 @@ class DubsClient(discord.Client):
       # my id
       # read the message and add it to the tree
       c = message.clean_content
+      self.msg_cache.write(c + "\n")
       if len(c) <= 0:
         # do not read empty messages
         return
@@ -134,6 +140,14 @@ class DubsClient(discord.Client):
       if c.startswith("+"):
         # ignore bot syntax
         return
+
+      # shit workaround for capitalization on mobile
+      c.replace("I'", "i'")
+      c.replace(" I ", " i ")
+
+      if c[0] == "I" and c[1] == " ":
+        c[0] = "i"
+
 
       strs = c.split()
       # use this to represent the end of a message
@@ -172,11 +186,15 @@ class DubsClient(discord.Client):
         print("saving markov data to file...")
         self.save_to_file()
 
+  def __del__(self):
+    self.save_to_file()
+    self.msg_cache.close()
+
 def main():
   argc = len(sys.argv)
   argv = sys.argv
 
-  if (argc != 4):
+  if (argc < 4):
     print("USAGE: py buddy.py <id> <command> <token>")
     return
 
