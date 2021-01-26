@@ -164,17 +164,12 @@ class DubsClient(discord.Client):
         
         combine = " ".join(bucket)
         # merge string on spaces
-        if combine in self.seq_tree.keys():
-          print(f"occurrences of {' '.join(bucket)}: {parent.children[i]}")
-          print("children:")
-          for child in self.seq_tree[combine].children:
-            print("\t" + child)
-        else:
+        if combine not in self.seq_tree.keys():
           print(f"new bucket: {' '.join(bucket)}")
           self.seq_tree[combine] = ChainEntry()
         
 
-        if combine not in parent.children:
+        if i not in parent.children:
           parent.children[i] = 1
         else:
           parent.children[i] = parent.children[i] + 1
