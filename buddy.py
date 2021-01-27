@@ -142,11 +142,12 @@ class DubsClient(discord.Client):
         return
 
       # shit workaround for capitalization on mobile
-      c.replace("I'", "i'")
-      c.replace(" I ", " i ")
+      c = c.replace("I'", "i'")
+      c = c.replace(" I ", " i ")
 
       if c[0] == "I" and c[1] == " ":
-        c[0] = "i"
+        # replaces leading "I" with lowercase
+        c = c.replace("I", "i", 1)
 
 
       strs = c.split()
