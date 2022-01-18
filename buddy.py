@@ -181,6 +181,12 @@ class DubsClient(discord.Client):
         self.ctr = self.ctr - self.save_every
         print("saving markov data to file...")
         self.save_to_file()
+    else:
+      # message is from another user -- cache with a flag
+      # todo: needs some idea of channel continuity
+      # for later ig :(
+      print("Message from @" + str(message.author.id) + ": " + message.clean_content)
+      self.msg_cache.write("<@" + str(message.author.id) + ">: " + message.clean_content + "\n")
 
   def __del__(self):
     self.save_to_file()
